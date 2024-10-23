@@ -1,7 +1,13 @@
 #include <iostream>
+#include "platform/daemoner.h"
+
+#define WINDOWS
 
 int main(int argc, char* argv[]) {
-  std::cout << "hellow world";
+  std::cout << "initiating" << std::endl;
+  daemonize();
+
+  // TODO: functioning
 
   return 0;
 }

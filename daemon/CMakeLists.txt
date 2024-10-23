@@ -14,7 +14,17 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS True)
 # ------main-------
 set(SOURCES
     src/main.cpp 
+    src/platform/daemonerwindows.cpp
+    src/platform/daemonermacos.cpp
+    src/platform/daemonerandroid.cpp
 )
+if(WIN32)
+    add_compile_definitions(WINDOWS_BUILD)
+elseif(APPLE)
+    add_compile_definitions(APPLE_BUILD)
+  elseif(ANDROID)
+    add_compile_definitions(ANDROID_BUILD)
+endif()
 
 add_executable(${EXECUTABLE_NAME} ${SOURCES})
 
