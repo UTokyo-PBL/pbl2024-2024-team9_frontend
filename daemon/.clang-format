@@ -1,0 +1,45 @@
+# Based on K&R style
+BasedOnStyle: Google
+IndentWidth: 2
+TabWidth: 2
+UseTab: Never
+
+# Disable include sorting
+SortIncludes: false
+
+# K&R specific brace style
+BraceWrapping:
+  AfterClass: false
+  AfterControlStatement: false
+  AfterEnum: false
+  AfterFunction: false
+  AfterNamespace: false
+  AfterStruct: false
+  AfterUnion: false
+  BeforeCatch: false
+  BeforeElse: true
+
+# C++11 brace-initializer indentation
+# IndentPPDirectives: BeforeHash
+AllowShortFunctionsOnASingleLine: false
+
+# Control statements
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+
+BreakBeforeBraces: Attach # K&R braces style
+SpaceBeforeParens: ControlStatements
+
+# Aligning and spacing
+AlignAfterOpenBracket: Align
+AlignOperands: true
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+
+ColumnLimit: 90
+
+# Function declaration and definition
+DerivePointerAlignment: false
+PointerAlignment: Left
+
+
