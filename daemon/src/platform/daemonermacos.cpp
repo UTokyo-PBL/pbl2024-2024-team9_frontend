@@ -4,7 +4,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
-#include "daemoner.h"
+#include "daemon/platform/daemoner.h"
 
 void daemonize() {
   pid_t pid = fork();

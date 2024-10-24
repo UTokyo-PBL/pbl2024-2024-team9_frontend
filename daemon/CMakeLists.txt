@@ -12,6 +12,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS True)
 #set(CMAKE_BUILD_TYPE Release)
 
 # ------main-------
+
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
+
 set(SOURCES
     src/main.cpp 
     src/platform/daemonerwindows.cpp
@@ -21,8 +24,8 @@ set(SOURCES
 if(WIN32)
     add_compile_definitions(WINDOWS_BUILD)
 elseif(APPLE)
-    add_compile_definitions(APPLE_BUILD)
-  elseif(ANDROID)
+  add_compile_definitions(MACOS_BUILD)
+elseif(ANDROID)
     add_compile_definitions(ANDROID_BUILD)
 endif()
 
