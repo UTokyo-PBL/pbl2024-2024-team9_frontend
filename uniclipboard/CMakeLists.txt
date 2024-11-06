@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(daemon LANGUAGES C CXX)
+project(uniclipboard LANGUAGES C CXX)
 
 set(EXECUTABLE_NAME ${PROJECT_NAME})
 set(CMAKE_CXX_STANDARD 17)
@@ -17,10 +17,8 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
 
 set(SOURCES
     src/main.cpp 
-    src/platform/daemonerwindows.cpp
-    src/platform/daemonermacos.cpp
-    src/platform/daemonerandroid.cpp
 )
+
 if(WIN32)
     add_compile_definitions(WINDOWS_BUILD)
 elseif(APPLE)
