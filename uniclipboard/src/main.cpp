@@ -1,22 +1,32 @@
-#include <ostream>
+#include <iostream>
 #include <string>
 #include "install.h"
+#include "util.h"
 
 int main(int argc, char* argv[]) {
-  if (argc < 3) {
+  if (argc < 2) {
     return 0;
   }
 
-  int regOption = std::stoi(argv[1]);
-  std::string programPath = argv[2];
+  auto args = ParseArguments(argc, argv);
 
-  if (regOption == 1) {
-    if (!AddToContextMenu(programPath)) {
-      return 1;
+  if (args.empty()) {
+    return 1;
+  }
+
+  if (args.count("install")) {
+    auto programPath = args["install"];
+    auto res = install(1, programPath);
+    if (res != 0) {
+      return res;
     }
-  } else if (regOption == 0) {
-    if (!RemoveFromContextMenu(programPath)) {
-      return 1;
+  }
+
+  if (args.count("uninstall")) {
+    auto programPath = args["uninstall"];
+    auto res = install(0, programPath);
+    if (res != 0) {
+      return res;
     }
   }
 

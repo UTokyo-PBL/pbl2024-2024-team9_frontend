@@ -89,3 +89,18 @@ bool RemoveFromContextMenu(const std::string& programPath) {
 
   return true;
 }
+
+
+int install(int option, std::string prog_path) {
+  if (option == 1) {
+    if (!AddToContextMenu(prog_path)) {
+      return 1;
+    }
+  } else if (option == 0) {
+    if (!RemoveFromContextMenu(prog_path)) {
+      return 1;
+    }
+  }
+
+  return 0;
+}
