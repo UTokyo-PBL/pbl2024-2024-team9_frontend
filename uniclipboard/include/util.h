@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <string>
 #include <unordered_map>
@@ -12,7 +13,7 @@ inline strmap ParseArguments(int argc, char* argv[]) {
 
     if (arg.size() > 2 && arg.substr(0, 2) == "--") {
       std::string key = arg.substr(2);
-      if (i + 1 < argc) {  // Check for a value
+      if (i + 1 < argc) {  // check for a value
         std::string nextArg = argv[i + 1];
 
         if (nextArg.size() > 2 && nextArg.substr(0, 2) == "--") {
@@ -20,9 +21,8 @@ inline strmap ParseArguments(int argc, char* argv[]) {
           continue;
         }
         arguments[key] = nextArg;
-        ++i;  // Skip the value
+        ++i;  // skip the value
       } else {
-        // Boolean flag
         arguments[key] = "true";
       }
     } else {
@@ -32,3 +32,4 @@ inline strmap ParseArguments(int argc, char* argv[]) {
 
   return arguments;
 }
+

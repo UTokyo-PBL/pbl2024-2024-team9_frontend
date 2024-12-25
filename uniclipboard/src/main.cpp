@@ -1,7 +1,7 @@
-#include <iostream>
 #include <string>
 #include "install.h"
 #include "util.h"
+#include "user.h"
 
 int main(int argc, char* argv[]) {
   if (argc < 2) {
@@ -28,6 +28,12 @@ int main(int argc, char* argv[]) {
     if (res != 0) {
       return res;
     }
+  }
+
+  if (args.count("login")) {
+    auto uname = std::string("testuser");
+    auto pwd = std::string("test123");
+    UserLogin(uname, pwd);
   }
 
   return 0;
