@@ -17,9 +17,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
 
 set(SOURCES
     src/main.cpp 
-    src/copy.cpp 
     src/install.cpp 
-    src/netutil.cpp 
 )
 
 if(WIN32)

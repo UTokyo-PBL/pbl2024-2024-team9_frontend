@@ -2,6 +2,7 @@
 #include "install.h"
 #include "util.h"
 #include "user.h"
+#include "copy.h"
 
 int main(int argc, char* argv[]) {
   if (argc < 2) {
@@ -34,6 +35,11 @@ int main(int argc, char* argv[]) {
     auto uname = std::string("testuser");
     auto pwd = std::string("test123");
     UserLogin(uname, pwd);
+  }
+
+  if (args.count("copy")) {
+    auto text = std::string("some random text");
+    CopyText(text);
   }
 
   return 0;
