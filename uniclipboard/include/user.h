@@ -11,5 +11,11 @@ inline void UserLogin(std::string& uname, std::string& pwd) {
       {"password", pwd.c_str()},
   };
 
-  Net_Send(json, "/login");
+  auto res = Net_Send(json, "/login");
+  if (res) {
+    // todo: get a token
+    std::cout << res->body;
+  }
 }
+
+

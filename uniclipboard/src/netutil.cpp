@@ -9,7 +9,7 @@ using Json = nlohmann::json;
 auto const REMOTE = "http://57.180.86.229";
 
 // todo: encrpyt
-void Net_Send(Json& json, char* url) {
+httplib::Result Net_Send(Json& json, const std::string& url) {
   auto content = json.dump();
 
   httplib::Client cli(REMOTE);
@@ -18,14 +18,14 @@ void Net_Send(Json& json, char* url) {
   try {
     auto res = cli.Post(url, content, "application/json");
     if (res == nullptr) {
-      printf("failed\n");
-      return;
+      std::cerr << "Net_send failed";
+      return httplib::Result();
     }
 
-    std::cout << "status:" << res->status << std::endl;
-    std::cout << "Response: " << res->body << std::endl;
+    return res;
   } catch (const std::exception& e) {
     std::cout << e.what();
+    return httplib::Result();
   }
 }
 

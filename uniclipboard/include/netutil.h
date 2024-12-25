@@ -1,6 +1,8 @@
 #pragma once
+#include <string>
+#include "httplib.h"
 #include "json.hpp"
 
 void TestHttp();
 
-void Net_Send(nlohmann::json& json, char* url);
+httplib::Result Net_Send(nlohmann::json& json, const std::string& url);
