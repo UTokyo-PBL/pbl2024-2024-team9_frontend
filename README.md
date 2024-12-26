@@ -7,4 +7,8 @@
     - C++ project, response for monitoring system clipboard and comunication with system.
  
 - Android version: 
-    - Java project using Gradle incluidng login, register, copy & paste from clipboard server by HTTP requests.
+    - Java project using Gradle incluidng login, register, copy & paste from UniClipboard history by HTTP requests.
+        - Copy: directly copy latest 3 texts from UniClipboard
+        - Paste: paste copied text from local to UniClipboard using Paste button
+    -  Independent from the Android system's built-in clipboard
+        - Unable to customize Context Menu using long press - modifying system-level feature is currently not allowed in Android.
