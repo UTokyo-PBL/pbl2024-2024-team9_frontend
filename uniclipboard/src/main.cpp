@@ -9,23 +9,29 @@ int main(int argc, char* argv[]) {
     return 0;
   }
 
+  std::ofstream outFile("log.txt");
+  if (!outFile) {
+    return 1;
+  }
+  // save the original buffer
+  std::streambuf* orgbuf = std::cout.rdbuf();
+  std::cout.rdbuf(outFile.rdbuf());
+
   auto args = ParseArguments(argc, argv);
 
   if (args.empty()) {
-    return 1;
+    return 0;
   }
 
   if (args.count("install")) {
-    auto programPath = args["install"];
-    auto res = install(1, programPath);
+    auto res = install(1, argv[0]);
     if (res != 0) {
       return res;
     }
   }
 
   if (args.count("uninstall")) {
-    auto programPath = args["uninstall"];
-    auto res = install(0, programPath);
+    auto res = install(0, argv[0]);
     if (res != 0) {
       return res;
     }
@@ -38,9 +44,16 @@ int main(int argc, char* argv[]) {
   }
 
   if (args.count("copy")) {
-    auto text = std::string("some random text");
-    CopyText(text);
+    UniClipboard::CopyClipboardText();
   }
+
+  if (args.count("file")) {
+    auto path = args["file"];
+    UniClipboard::CopyFromFile(path);
+  }
+
+  std::cout.rdbuf(orgbuf);
+  outFile.close();
 
   return 0;
 }

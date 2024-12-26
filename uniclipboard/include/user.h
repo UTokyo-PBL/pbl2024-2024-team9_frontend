@@ -13,7 +13,14 @@ inline void UserLogin(std::string& uname, std::string& pwd) {
 
   auto res = NetSend(json, "/login");
   if (res) {
-    // todo: get a token
+    try {
+      auto resjson = Json::parse(res->body);
+      std::string token = resjson["token"];
+      // todo: store token
+      std::cout << "token is: " << token;
+    } catch (const std::exception& e) {
+      std::cerr << "Parse error: " << e.what() << "\n";
+    }
     std::cout << res->body;
   }
 }

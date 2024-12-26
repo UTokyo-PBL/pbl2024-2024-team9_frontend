@@ -13,12 +13,21 @@ auto const REMOTE = "http://57.180.86.229";
 inline httplib::Result NetSend(Json& json, const std::string& url) {
   auto content = json.dump();
 
+  std::cout << content + "\n";
+
   httplib::Client cli(REMOTE);
   cli.set_connection_timeout(5);
 
   try {
+    httplib::Headers headers = {
+        {"Authorization",
+         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
+         "eyJ1c2VyX2lkIjoiNjc2NThmODVlZmY3M2ZkODE2YzBjMjdkIiwiZXhwIjoxNzM1MjQwMjY3fQ."
+         "WTymwYQi5L2iyVBZyHPI2UkVxzMlX0E96xfqLkUgj9o"},
+    };
+
     // todo: token
-    auto res = cli.Post(url, content, "application/json");
+    auto res = cli.Post(url, headers, content, "application/json");
     if (res == nullptr) {
       std::cerr << "Net_send failed";
       return httplib::Result();

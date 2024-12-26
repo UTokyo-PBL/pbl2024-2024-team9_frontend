@@ -32,10 +32,6 @@ bool AddToContextMenu(const std::string& programPath) {
     return false;
   }
 
-  // Add the NoOpen value to prevent console window
-  DWORD noOpenValue = 1;
-  result = RegSetValueEx(hKey, "NoOpen", 0, REG_DWORD,
-                         reinterpret_cast<const BYTE*>(&noOpenValue), sizeof(DWORD));
   RegCloseKey(hKey);  // Close the shell key here
 
   if (result != ERROR_SUCCESS) {
@@ -54,7 +50,7 @@ bool AddToContextMenu(const std::string& programPath) {
   }
 
   // Set the program path with %1 for the selected file
-  const std::string command = "\"" + programPath + "\" \"%1\"";
+  const std::string command = "\"" + programPath + "\" --file \"%1\"";
   result = RegSetValueEx(hKey, nullptr, 0, REG_SZ,
                          reinterpret_cast<const BYTE*>(command.c_str()),
                          (command.size() + 1) * sizeof(char));
@@ -89,7 +85,6 @@ bool RemoveFromContextMenu(const std::string& programPath) {
 
   return true;
 }
-
 
 int install(int option, std::string prog_path) {
   if (option == 1) {
