@@ -52,8 +52,6 @@ inline void CopyClipboardText() {
 }
 
 inline void CopyFromFile(const std::string& path) {
-  std::cout << "file: " << path << std::endl;
-
   // txt
   if (std::filesystem::path(path).extension() == ".txt") {
     std::ifstream file(path);

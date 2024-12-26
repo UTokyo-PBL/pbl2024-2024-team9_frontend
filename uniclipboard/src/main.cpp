@@ -3,6 +3,7 @@
 #include "util.h"
 #include "user.h"
 #include "copy.h"
+#include "paste.h"
 
 int main(int argc, char* argv[]) {
   if (argc < 2) {
@@ -50,6 +51,11 @@ int main(int argc, char* argv[]) {
   if (args.count("file")) {
     auto path = args["file"];
     UniClipboard::CopyFromFile(path);
+  }
+
+  if (args.count("paste")) {
+    auto path = args["paste"];
+    UniClipboard::PasteToFile(path);
   }
 
   std::cout.rdbuf(orgbuf);
