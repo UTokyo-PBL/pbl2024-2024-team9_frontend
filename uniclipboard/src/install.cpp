@@ -1,63 +1,77 @@
 #include <windows.h>
 #include <iostream>
 #include <string>
+#include <vector>
 
 auto const PNAME = "UniClipboardCopy";
+
+struct ContextMenuCommand {
+  std::string name;
+  std::string displayName;
+  std::string command;
+};
 
 bool AddToContextMenu(const std::string& programPath) {
   HKEY hKey;
   LONG result;
 
-  const std::string shellPath = R"(SOFTWARE\Classes\*\shell\)" + std::string(PNAME);
-  const std::string commandPath = shellPath + "\\command";
+  std::vector<ContextMenuCommand> commands = {
+      {"UniClipboardCopy", "Copy With UniClipboard",
+       "\"" + programPath + "\" --file \"%1\""},
+      {"UniClipboardPaste", "Paste From UniClipboard",
+       "\"" + programPath + "\" --paste \"%1\""}};
 
-  // Create the shell key
-  result = RegCreateKeyEx(HKEY_CURRENT_USER, shellPath.c_str(), 0, nullptr,
-                          REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &hKey, nullptr);
+  for (const auto& cmd : commands) {
+    const std::string shellPath = R"(SOFTWARE\Classes\*\shell\)" + cmd.name;
 
-  if (result != ERROR_SUCCESS) {
-    std::cerr << "Failed to create registry key '" << shellPath << "'. Error: " << result
-              << "\n";
-    return false;
-  }
+    result = RegCreateKeyEx(HKEY_CURRENT_USER, shellPath.c_str(), 0, nullptr,
+                            REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &hKey, nullptr);
 
-  // Set the display name
-  const std::string displayName = "Copy With UniClipboard";
-  result = RegSetValueEx(hKey, nullptr, 0, REG_SZ,
-                         reinterpret_cast<const BYTE*>(displayName.c_str()),
-                         (displayName.size() + 1) * sizeof(char));
-  if (result != ERROR_SUCCESS) {
-    std::cerr << "Failed to set display name. Error: " << result << "\n";
-    RegCloseKey(hKey);  // Close the key on error
-    return false;
-  }
+    if (result != ERROR_SUCCESS) {
+      std::cerr << "Failed to create/open registry key for command '" << cmd.name
+                << "'. Error: " << result << "\n";
+      return false;
+    }
 
-  RegCloseKey(hKey);  // Close the shell key here
+    // Set the display name for the command
+    result = RegSetValueEx(hKey, nullptr, 0, REG_SZ,
+                           reinterpret_cast<const BYTE*>(cmd.displayName.c_str()),
+                           (cmd.displayName.size() + 1) * sizeof(char));
+    if (result != ERROR_SUCCESS) {
+      std::cerr << "Failed to set display name for command '" << cmd.name
+                << "'. Error: " << result << "\n";
+      RegCloseKey(hKey);
+      return false;
+    }
 
-  if (result != ERROR_SUCCESS) {
-    std::cerr << "Failed to set NoOpen value. Error: " << result << "\n";
-    return false;
-  }
+    // create the command subkey (i.e., \command)
+    const std::string cmdCommandPath = shellPath + "\\command";
+    HKEY hCmdKey;
+    result =
+        RegCreateKeyEx(HKEY_CURRENT_USER, cmdCommandPath.c_str(), 0, nullptr,
+                       REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &hCmdKey, nullptr);
+    if (result != ERROR_SUCCESS) {
+      std::cerr << "Failed to create command key for '" << cmdCommandPath
+                << "'. Error: " << result << "\n";
+      RegCloseKey(hKey);
+      return false;
+    }
 
-  // Create the command key
-  result = RegCreateKeyEx(HKEY_CURRENT_USER, commandPath.c_str(), 0, nullptr,
-                          REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &hKey, nullptr);
+    // set the command to be executed (e.g., programPath --file "%1")
+    result = RegSetValueEx(hCmdKey, nullptr, 0, REG_SZ,
+                           reinterpret_cast<const BYTE*>(cmd.command.c_str()),
+                           (cmd.command.size() + 1) * sizeof(char));
 
-  if (result != ERROR_SUCCESS) {
-    std::cerr << "Failed to create command key '" << commandPath << "'. Error: " << result
-              << "\n";
-    return false;
-  }
+    if (result != ERROR_SUCCESS) {
+      std::cerr << "Failed to set command value for '" << cmd.name
+                << "'. Error: " << result << "\n";
+      RegCloseKey(hCmdKey);
+      RegCloseKey(hKey);
+      return false;
+    }
 
-  // Set the program path with %1 for the selected file
-  const std::string command = "\"" + programPath + "\" --file \"%1\"";
-  result = RegSetValueEx(hKey, nullptr, 0, REG_SZ,
-                         reinterpret_cast<const BYTE*>(command.c_str()),
-                         (command.size() + 1) * sizeof(char));
-  RegCloseKey(hKey);
-  if (result != ERROR_SUCCESS) {
-    std::cerr << "Failed to set command value. Error: " << result << "\n";
-    return false;
+    RegCloseKey(hCmdKey);
+    RegCloseKey(hKey);
   }
 
   return true;
@@ -66,21 +80,26 @@ bool AddToContextMenu(const std::string& programPath) {
 bool RemoveFromContextMenu(const std::string& programPath) {
   LONG result;
 
-  auto shellPath = std::string(R"(SOFTWARE\Classes\*\shell\)") + PNAME;
-  auto commandPath = shellPath + "\\command";
+  std::vector<ContextMenuCommand> commands = {
+      {"UniClipboardCopy", "Copy With UniClipboard", ""},
+      {"UniClipboardPaste", "Paste From UniClipboard", ""}};
 
-  // Delete the command key (associated with the program execution)
-  result = RegDeleteKey(HKEY_CURRENT_USER, commandPath.c_str());
-  if (result != ERROR_SUCCESS) {
-    std::cerr << "Failed to delete command key. Error: " << result << "\n";
-    return false;
-  }
+  for (const auto& cmd : commands) {
+    const std::string cmdShellPath = R"(SOFTWARE\Classes\*\shell\)" + cmd.name;
 
-  // Delete the shell key (the context menu entry itself)
-  result = RegDeleteKey(HKEY_CURRENT_USER, shellPath.c_str());
-  if (result != ERROR_SUCCESS) {
-    std::cerr << "Failed to delete shell key. Error: " << result << "\n";
-    return false;
+    // delete the 'command' subkey first
+    const std::string cmdCommandPath = cmdShellPath + "\\command";
+    result = RegDeleteTree(HKEY_CURRENT_USER, cmdCommandPath.c_str());
+    if (result != ERROR_SUCCESS && result != ERROR_FILE_NOT_FOUND) {
+      std::cerr << "Failed to delete command subkey for '" << cmd.name
+                << "'. Error: " << result << "\n";
+    }
+
+    // delete the main shell key
+    result = RegDeleteTree(HKEY_CURRENT_USER, cmdShellPath.c_str());
+    if (result != ERROR_SUCCESS && result != ERROR_FILE_NOT_FOUND) {
+      std::cerr << "Failed to delete '" << cmd.name << "' key. Error: " << result << "\n";
+    }
   }
 
   return true;
