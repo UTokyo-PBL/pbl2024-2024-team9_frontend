@@ -21,7 +21,7 @@ inline httplib::Result NetSend(Json& json, const std::string& url) {
   try {
     httplib::Headers headers = {
         {"Authorization",
-         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
+         "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
          "eyJ1c2VyX2lkIjoiNjc2NThmODVlZmY3M2ZkODE2YzBjMjdkIiwiZXhwIjoxNzM1MjQwMjY3fQ."
          "WTymwYQi5L2iyVBZyHPI2UkVxzMlX0E96xfqLkUgj9o"},
     };
