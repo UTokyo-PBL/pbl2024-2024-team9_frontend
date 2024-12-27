@@ -4,7 +4,8 @@ set -eux -o pipefail
 URL="http://57.180.86.229"    # 替换为你的 URL
 PORT="8080"               # 替换为你的端口
 SEND_DATA=$(cat "$1")
-TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjc2NThmODVlZmY3M2ZkODE2YzBjMjdkIiwiZXhwIjoxNzM1MjQwMjY3fQ.WTymwYQi5L2iyVBZyHPI2UkVxzMlX0E96xfqLkUgj9o"   # 替换为你的 JWT token
+REP=$(curl --silent -d '{"username":"testuser", "password":"test123"}' -H "Content-Type: application/json" -X POST http://57.180.86.229/login)
+TOKEN=$(echo "$REP" | jq -r '.token')   # 替换为你的 JWT token
 JSON_DATA=$(jq -Rs '{content: .}' "$1") # 设置 JSON 数据
 
 # 检查变量是否为空

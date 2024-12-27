@@ -2,7 +2,8 @@
 set -eux -o pipefail
 # 设置目标 URL
 TARGET_URL="http://57.180.86.229/add_item" # 将此替换为您想要发送数据的 URL
-TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjc2NThmODVlZmY3M2ZkODE2YzBjMjdkIiwiZXhwIjoxNzM1MjQwMjY3fQ.WTymwYQi5L2iyVBZyHPI2UkVxzMlX0E96xfqLkUgj9o"   # 替换为你的 JWT token
+REP=$(curl --silent -d '{"username":"testuser", "password":"test123"}' -H "Content-Type: application/json" -X POST http://57.180.86.229/login)
+TOKEN=$(echo "$REP" | jq -r '.token')   # 替换为你的 JWT token
 
 # 获取剪贴板内容 (使用 xclip 或 pbpaste, 根据您的系统选择)
 if command -v xclip &> /dev/null; then
