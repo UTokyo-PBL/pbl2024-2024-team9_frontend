@@ -3,8 +3,13 @@
 
 ## Description
 
-- Daemon: 
-    - C++ project, response for monitoring system clipboard and comunication with system.
+- ~~Daemon~~: 
+    - ~~C++ project, response for monitoring system clipboard and comunication with system.~~
+
+- Windows:
+    - C++ project, mininal dependencies.
+    - Finished: login, copy, paste.
+    - Todo: encrypt, GUI.
  
 - Android version: 
     - Java project using Gradle incluidng login, register, copy & paste from UniClipboard history by HTTP requests.
