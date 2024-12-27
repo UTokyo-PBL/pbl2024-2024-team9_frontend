@@ -15,6 +15,7 @@ inline void PasteToFile(const std::string& path) {
 
   try {
     auto items = Json::parse(res->body);
+    std::cout << res->body << std::endl;
     // todo: timestamp use unix format
 
     auto size = items.size();
@@ -22,7 +23,7 @@ inline void PasteToFile(const std::string& path) {
       return;
     }
 
-    auto text = items[0]["content"];
+    std::string text = items[0]["content"];
 
     if (std::filesystem::path(path).extension() == ".txt") {
       std::ofstream outFile(path, std::ios::app);

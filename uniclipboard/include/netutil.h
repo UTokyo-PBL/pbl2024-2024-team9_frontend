@@ -5,9 +5,36 @@
 #include "httplib.h"
 #include "json.hpp"
 
+namespace UniClipboard {
+
 using Json = nlohmann::json;
 
 auto const REMOTE = "http://57.180.86.229";
+
+inline std::string TokenPath() {
+  // todo: put it in userpath
+  return "./token.txt";
+}
+
+inline std::string GetToken() {
+  static std::string token = "";
+  if (token != "") {
+    return token;
+  }
+
+  std::ifstream file(TokenPath());
+  if (file.is_open()) {
+    std::ostringstream buffer;
+    buffer << file.rdbuf();
+    token = buffer.str();
+    file.close();
+    if (token != "") {
+      return "Bearer " + token;
+    }
+  }
+
+  return "";
+}
 
 // todo: encrpyt
 inline httplib::Result NetSend(Json& json, const std::string& url) {
@@ -17,12 +44,7 @@ inline httplib::Result NetSend(Json& json, const std::string& url) {
   cli.set_connection_timeout(5);
 
   try {
-    httplib::Headers headers = {
-        {"Authorization",
-         "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
-         "eyJ1c2VyX2lkIjoiNjc2NThmODVlZmY3M2ZkODE2YzBjMjdkIiwiZXhwIjoxNzM1MjQwMjY3fQ."
-         "WTymwYQi5L2iyVBZyHPI2UkVxzMlX0E96xfqLkUgj9o"},
-    };
+    httplib::Headers headers = {{"Authorization", GetToken().c_str()}};
 
     auto res = cli.Post(url, headers, content, "application/json");
     if (res == nullptr) {
@@ -44,12 +66,7 @@ inline httplib::Result NetPull(Json& json, const std::string& url) {
   cli.set_connection_timeout(5);
 
   try {
-    httplib::Headers headers = {
-        {"Authorization",
-         "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
-         "eyJ1c2VyX2lkIjoiNjc2NThmODVlZmY3M2ZkODE2YzBjMjdkIiwiZXhwIjoxNzM1MjQwMjY3fQ."
-         "WTymwYQi5L2iyVBZyHPI2UkVxzMlX0E96xfqLkUgj9o"},
-    };
+    httplib::Headers headers = {{"Authorization", GetToken().c_str()}};
 
     auto res = cli.Get(url, headers);
     if (res == nullptr) {
@@ -87,3 +104,4 @@ inline void TestHttp() {
     }
   }
 }
+}  // namespace UniClipboard
