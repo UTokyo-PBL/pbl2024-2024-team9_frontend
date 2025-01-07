@@ -1,9 +1,9 @@
 #include <string>
 #include "install.h"
 #include "util.h"
-#include "user.h"
 #include "copy.h"
 #include "paste.h"
+#include "gui.h"
 
 int main(int argc, char* argv[]) {
   if (argc < 2) {
@@ -25,23 +25,21 @@ int main(int argc, char* argv[]) {
   }
 
   if (args.count("install")) {
-    auto res = install(1, argv[0]);
+    auto res = UniClipboard::install(1, argv[0]);
     if (res != 0) {
       return res;
     }
   }
 
   if (args.count("uninstall")) {
-    auto res = install(0, argv[0]);
+    auto res = UniClipboard::install(0, argv[0]);
     if (res != 0) {
       return res;
     }
   }
 
   if (args.count("login")) {
-    auto uname = std::string("testuser");
-    auto pwd = std::string("test123");
-    UserLogin(uname, pwd);
+    UniClipboard::GUILogin();
   }
 
   if (args.count("copy")) {

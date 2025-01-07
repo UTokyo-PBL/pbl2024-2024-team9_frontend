@@ -2,6 +2,9 @@
 #include <string>
 #include "netutil.h"
 #include "json.hpp"
+
+namespace UniClipboard {
+
 using Json = nlohmann::json;
 
 inline void UserLogin(std::string& uname, std::string& pwd) {
@@ -38,3 +41,4 @@ inline void UserLogin(std::string& uname, std::string& pwd) {
     std::cout << res->body;
   }
 }
+}  // namespace UniClipboard

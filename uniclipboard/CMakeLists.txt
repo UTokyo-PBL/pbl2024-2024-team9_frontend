@@ -18,6 +18,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
 set(SOURCES
     src/main.cpp 
     src/install.cpp 
+    src/gui.cpp 
 )
 
 if(WIN32)

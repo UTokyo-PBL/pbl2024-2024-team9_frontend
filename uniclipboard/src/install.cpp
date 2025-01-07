@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+namespace UniClipboard {
 auto const PNAME = "UniClipboardCopy";
 
 struct ContextMenuCommand {
@@ -118,3 +119,4 @@ int install(int option, std::string prog_path) {
 
   return 0;
 }
+}  // namespace UniClipboard

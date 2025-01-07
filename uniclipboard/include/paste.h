@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
 #include "netutil.h"
-#include <windows.h>
 
 namespace UniClipboard {
 
