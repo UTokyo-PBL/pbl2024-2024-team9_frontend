@@ -67,8 +67,18 @@ void GUILogin() {
   wc.lpszClassName = CLASS_NAME;
   RegisterClass(&wc);
 
-  HWND hwnd = CreateWindowEx(0, CLASS_NAME, "Login", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
-                             CW_USEDEFAULT, 300, 200, NULL, NULL, wc.hInstance, NULL);
+  int windowWidth = 300;
+  int windowHeight = 200;
+
+  int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+  int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+  // start in center of desktop
+  int xPos = (screenWidth - windowWidth) / 2;
+  int yPos = (screenHeight - windowHeight) / 2;
+
+  HWND hwnd = CreateWindowEx(0, CLASS_NAME, "UniClipboard", WS_OVERLAPPEDWINDOW, xPos, yPos,
+                             windowWidth, windowHeight, NULL, NULL, wc.hInstance, NULL);
 
   if (hwnd == NULL) {
     return;
