@@ -18,9 +18,9 @@ bool AddToContextMenu(const std::string& programPath) {
 
   std::vector<ContextMenuCommand> commands = {
       {"UniClipboardCopy", "Copy With UniClipboard",
-       "\"" + programPath + "\" --file \"%1\""},
+       "\"" + programPath + "\" --copyfile \"%1\""},
       {"UniClipboardPaste", "Paste From UniClipboard",
-       "\"" + programPath + "\" --paste \"%1\""}};
+       "\"" + programPath + "\" --pastefile \"%1\""}};
 
   for (const auto& cmd : commands) {
     const std::string shellPath = R"(SOFTWARE\Classes\*\shell\)" + cmd.name;
