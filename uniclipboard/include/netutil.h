@@ -117,36 +117,45 @@ inline httplib::Result NetPull(const std::string& url) {
 
 inline bool NetPullFile(const std::string& save_path, const std::string& url) {
   httplib::Client cli(REMOTE);
-  cli.set_connection_timeout(5);
+  cli.set_connection_timeout(10);
+  cli.set_follow_location(true);
 
   try {
     httplib::Headers headers = {{"Authorization", GetToken().c_str()}};
 
+    std::cout << "downfile url:" + url << std::endl;
+
     auto res = cli.Get(url.c_str(), headers);
     if (res == nullptr) {
-      std::cerr << "NetPull failed" << std::endl;
+      std::cout << "NetPullFile failed" << std::endl;
       return false;
     }
 
     if (res->status != 200) {
-      std::cout << "Failed to download file, status: " << res->status << std::endl;
+      std::cout << "Failed to download file, status: " << res->status;
+      std::cout << "body: " << res->body << std::endl;
       return false;
     }
 
     std::ofstream output_file(save_path, std::ios::binary);
-    if (!output_file) {
-      std::cerr << "Failed to open file for saving!" << std::endl;
+    if (!output_file.is_open()) {
+      std::cout << "Failed to open file for saving at path: " << save_path << std::endl;
       return false;
     }
 
     output_file.write(res->body.c_str(), res->body.size());
-    std::cout << "File downloaded and saved successfully to " << save_path << std::endl;
+    if (!output_file.good()) {
+      std::cout << "Error occurred while writing to file: " << save_path << std::endl;
+      return false;
+    }
+
     return true;
   } catch (const std::exception& e) {
-    std::cerr << "Exception: " << e.what() << std::endl;
+    std::cout << "Exception: " << e.what() << std::endl;
     return false;
   }
 }
+
 inline void TestHttp() {
   // HTTP
   httplib::Client cli(REMOTE);

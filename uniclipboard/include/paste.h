@@ -14,7 +14,6 @@ inline void Paste() {
     auto items = Json::parse(res->body);
     // todo: timestamp use unix format
 
-    std::cout << items;
     auto size = items.size();
     if (size < 1) {
       return;
