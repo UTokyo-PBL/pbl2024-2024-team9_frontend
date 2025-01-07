@@ -17,10 +17,10 @@ bool AddToContextMenu(const std::string& programPath) {
   LONG result;
 
   std::vector<ContextMenuCommand> commands = {
-      {"UniClipboardCopy", "Copy With UniClipboard",
-       "\"" + programPath + "\" --copyfile \"%1\""},
-      {"UniClipboardPaste", "Paste From UniClipboard",
-       "\"" + programPath + "\" --pastefile \"%1\""}};
+      {"UniClipboardCopy", "Copy to UniClipboard",
+       "\"" + programPath + "\" --copyfile \"%1\""}};
+  // {"UniClipboardPaste", "Paste From UniClipboard",
+  //  "\"" + programPath + "\" --pastefile \"%1\""}};
 
   for (const auto& cmd : commands) {
     const std::string shellPath = R"(SOFTWARE\Classes\*\shell\)" + cmd.name;
@@ -82,8 +82,8 @@ bool RemoveFromContextMenu(const std::string& programPath) {
   LONG result;
 
   std::vector<ContextMenuCommand> commands = {
-      {"UniClipboardCopy", "Copy With UniClipboard", ""},
-      {"UniClipboardPaste", "Paste From UniClipboard", ""}};
+      {"UniClipboardCopy", "Copy to UniClipboard", ""}};
+  // {"UniClipboardPaste", "Paste From UniClipboard", ""}};
 
   for (const auto& cmd : commands) {
     const std::string cmdShellPath = R"(SOFTWARE\Classes\*\shell\)" + cmd.name;
@@ -111,11 +111,10 @@ bool AddToDesktopContextMenu(const std::string& programPath) {
   LONG result;
 
   std::vector<ContextMenuCommand> commands = {
-      {"UniClipboardCopy", "Copy from system clipboard",
+      {"UniClipboardCopy", "Copy system clipboard to UniClipboard",
        "\"" + programPath + "\" --copy"},
-      {"UniClipboardPaste", "Paste to system clipboard",
+      {"UniClipboardPaste", "Paste from UniClipboard ",
        "\"" + programPath + "\" --paste"}};
-
   for (const auto& cmd : commands) {
     // register the context menu on the desktop (blank area)
     const std::string shellPath =
@@ -175,8 +174,8 @@ bool RemoveFromDesktopContextMenu(const std::string& programPath) {
   LONG result;
 
   std::vector<ContextMenuCommand> commands = {
-      {"UniClipboardCopy", "Copy from system clipboard", ""},
-      {"UniClipboardPaste", "Paste to system clipboard", ""}};
+      {"UniClipboardCopy", "Copy system clipboard to UniClipboard", ""},
+      {"UniClipboardPaste", "Paste from UniClipboard ", ""}};
 
   for (const auto& cmd : commands) {
     // define the shell path for the desktop context menu

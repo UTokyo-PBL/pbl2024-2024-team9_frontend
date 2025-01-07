@@ -78,12 +78,7 @@ inline int run(int argc, char* argv[]) {
   }
 
   if (args.count("paste")) {
-    UniClipboard::PasteToClipboard();
-  }
-
-  if (args.count("pastefile")) {
-    auto path = args["pastefile"];
-    UniClipboard::PasteToFile(path);
+    UniClipboard::Paste();
   }
 
   return 0;

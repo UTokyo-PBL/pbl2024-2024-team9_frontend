@@ -29,7 +29,8 @@ inline std::string GetToken() {
     token = buffer.str();
     file.close();
     if (token != "") {
-      return "Bearer " + token;
+      token = "Bearer " + token;
+      return token;
     }
   }
 
@@ -59,9 +60,42 @@ inline httplib::Result NetSend(Json& json, const std::string& url) {
   }
 }
 
-inline httplib::Result NetPull(Json& json, const std::string& url) {
-  auto content = json.dump();
+inline httplib::Result NetSendFile(const std::string& path, const std::string& url) {
+  std::ifstream file(path, std::ios::binary);
+  if (!file) {
+    std::cerr << "Failed to open file!" << std::endl;
+    return httplib::Result();
+  }
 
+  std::string file_data((std::istreambuf_iterator<char>(file)),
+                        std::istreambuf_iterator<char>());
+
+  httplib::Client cli(REMOTE);
+  cli.set_connection_timeout(5);
+
+  try {
+    httplib::Headers headers = {{"Authorization", GetToken().c_str()}};
+
+    std::string filename = std::filesystem::path(path).filename().string();
+    httplib::MultipartFormDataItems items;
+    items.push_back(httplib::MultipartFormData{"file", file_data, filename,
+                                               "application/octet-stream"});
+
+    auto res = cli.Post(url.c_str(), headers, items);
+    if (res == nullptr) {
+      std::cerr << "NetSend failed" << std::endl;
+      return httplib::Result();
+    }
+
+    std::cout << res->body << std::endl;
+    return res;
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+    return httplib::Result();
+  }
+}
+
+inline httplib::Result NetPull(const std::string& url) {
   httplib::Client cli(REMOTE);
   cli.set_connection_timeout(5);
 
@@ -81,6 +115,38 @@ inline httplib::Result NetPull(Json& json, const std::string& url) {
   }
 }
 
+inline bool NetPullFile(const std::string& save_path, const std::string& url) {
+  httplib::Client cli(REMOTE);
+  cli.set_connection_timeout(5);
+
+  try {
+    httplib::Headers headers = {{"Authorization", GetToken().c_str()}};
+
+    auto res = cli.Get(url.c_str(), headers);
+    if (res == nullptr) {
+      std::cerr << "NetPull failed" << std::endl;
+      return false;
+    }
+
+    if (res->status != 200) {
+      std::cout << "Failed to download file, status: " << res->status << std::endl;
+      return false;
+    }
+
+    std::ofstream output_file(save_path, std::ios::binary);
+    if (!output_file) {
+      std::cerr << "Failed to open file for saving!" << std::endl;
+      return false;
+    }
+
+    output_file.write(res->body.c_str(), res->body.size());
+    std::cout << "File downloaded and saved successfully to " << save_path << std::endl;
+    return true;
+  } catch (const std::exception& e) {
+    std::cerr << "Exception: " << e.what() << std::endl;
+    return false;
+  }
+}
 inline void TestHttp() {
   // HTTP
   httplib::Client cli(REMOTE);

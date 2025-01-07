@@ -4,91 +4,64 @@
 
 namespace UniClipboard {
 
-inline void PasteToFile(const std::string& path) {
-  Json json = {};
-
-  auto res = NetPull(json, "/list_all_items");
+inline void Paste() {
+  auto res = NetPull("/list_all_files_and_items");
   if (!res) {
     return;
   }
 
   try {
     auto items = Json::parse(res->body);
-    std::cout << res->body << std::endl;
     // todo: timestamp use unix format
 
+    std::cout << items;
     auto size = items.size();
     if (size < 1) {
       return;
     }
 
-    std::string text = items[0]["content"];
+    auto item = items[0];
 
-    if (std::filesystem::path(path).extension() == ".txt") {
-      std::ofstream outFile(path, std::ios::app);
+    std::string type = item["type"];
+    if (type == "file") {
+      std::string url = item["_id"];
+      url = "/download_file/" + url;
+      std::string save_path = item["filename"];
+      save_path = "./" + save_path;
+      NetPullFile(save_path, url);
 
-      if (!outFile) {
-        std::cerr << "Failed to paste: " << path << std::endl;
-        return;
-      }
+    } else {
+      std::string text = item["content"];
+      // Open the clipboard
+      if (OpenClipboard(NULL)) {
+        // Empty the clipboard
+        EmptyClipboard();
 
-      outFile << text;
-      outFile.close();
-      return;
-    }
+        // Allocate memory for the clipboard data
+        HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, text.size() + 1);
+        if (hMem == NULL) {
+          std::cerr << "Failed to allocate memory for clipboard!" << std::endl;
+          CloseClipboard();
+          return;
+        }
 
-  } catch (const std::exception& e) {
-    std::cerr << "Parse error: " << e.what() << "\n";
-  }
-}
+        // Copy the text into the allocated memory
+        char* pMem = static_cast<char*>(GlobalLock(hMem));
+        if (pMem != NULL) {
+          strcpy_s(pMem, text.size() + 1, text.c_str());
+          GlobalUnlock(hMem);
 
-inline void PasteToClipboard() {
-  Json json = {};
-  auto res = NetPull(json, "/list_all_items");
-  if (!res) {
-    return;
-  }
+          // Set the clipboard data (text format)
+          SetClipboardData(CF_TEXT, hMem);
+        }
 
-  try {
-    auto items = Json::parse(res->body);
-    std::cout << res->body << std::endl;
-    auto size = items.size();
-    if (size < 1) {
-      return;
-    }
-
-    std::string text = items[0]["content"];
-
-    // Open the clipboard
-    if (OpenClipboard(NULL)) {
-      // Empty the clipboard
-      EmptyClipboard();
-
-      // Allocate memory for the clipboard data
-      HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, text.size() + 1);
-      if (hMem == NULL) {
-        std::cerr << "Failed to allocate memory for clipboard!" << std::endl;
+        // Close the clipboard
         CloseClipboard();
-        return;
       }
-
-      // Copy the text into the allocated memory
-      char* pMem = static_cast<char*>(GlobalLock(hMem));
-      if (pMem != NULL) {
-        strcpy_s(pMem, text.size() + 1, text.c_str());
-        GlobalUnlock(hMem);
-
-        // Set the clipboard data (text format)
-        SetClipboardData(CF_TEXT, hMem);
-      }
-
-      // Close the clipboard
-      CloseClipboard();
     }
 
   } catch (const std::exception& e) {
     std::cerr << "Parse error: " << e.what() << "\n";
   }
 }
-
 }  // namespace UniClipboard

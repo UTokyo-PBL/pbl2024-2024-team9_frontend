@@ -52,30 +52,8 @@ inline void CopyClipboardText() {
 }
 
 inline void CopyFromFile(const std::string& path) {
-  // txt
-  if (std::filesystem::path(path).extension() == ".txt") {
-    std::ifstream file(path);
-    if (file.is_open()) {
-      std::ostringstream buffer;
-      buffer << file.rdbuf();
-      std::string text = buffer.str();
-      file.close();
-
-      Json json = {
-          {"content", text.c_str()},
-      };
-
-      auto res = NetSend(json, "/add_item");
-      if (res) {
-        std::cout << res->body << std::endl;
-      }
-
-    } else {
-      std::cerr << "Error: Unable to open file '" << path << "'." << std::endl;
-    }
-
-    return;
-  }
+  NetSendFile(path, "/upload_file");
+  return;
 }
 
 }  // namespace UniClipboard
