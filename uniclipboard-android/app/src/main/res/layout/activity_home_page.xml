@@ -92,11 +92,18 @@
                 android:layout_height="20dp" />
 
             <Button
-                android:id="@+id/buttonPaste"
+                android:id="@+id/buttonCopyText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/azure"
-                android:text="Paste" />
+                android:text="Copy text" />
+
+            <Button
+                android:id="@+id/buttonCopyFile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/azure"
+                android:text="Copy file" />
 
         </LinearLayout>
 
