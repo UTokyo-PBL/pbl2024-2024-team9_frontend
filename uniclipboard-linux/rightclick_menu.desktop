@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Service
+X-KDE-ServiceTypes=KonqPopupMenu/Plugin
+MimeType=*
+Actions=run_my_script;
+
+[Desktop Action run_my_script]
+Name=Send to clipboard  # 右键菜单项的名称
+Icon=  # (可选) 你想使用的图标的名称或路径
+Exec=/bin/bash '/home/w/gitproject/pbl2024-2024-team9_frontend/uniclipboard-linux/clip.sh "%f"' # 与上面相同，替换成你的脚本路径

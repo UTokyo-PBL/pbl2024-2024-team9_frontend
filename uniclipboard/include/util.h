@@ -2,6 +2,12 @@
 #include <iostream>
 #include <string>
 #include <unordered_map>
+#include "install.h"
+#include "copy.h"
+#include "paste.h"
+#include "gui.h"
+
+namespace UniClipboard {
 
 using strmap = std::unordered_map<std::string, std::string>;
 
@@ -33,3 +39,48 @@ inline strmap ParseArguments(int argc, char* argv[]) {
   return arguments;
 }
 
+inline int run(int argc, char* argv[]) {
+  if (argc < 2) {
+    return 0;
+  }
+
+  auto args = ParseArguments(argc, argv);
+
+  if (args.empty()) {
+    return 0;
+  }
+
+  if (args.count("install")) {
+    auto res = UniClipboard::install(1, argv[0]);
+    if (res != 0) {
+      return res;
+    }
+  }
+
+  if (args.count("uninstall")) {
+    auto res = UniClipboard::install(0, argv[0]);
+    if (res != 0) {
+      return res;
+    }
+  }
+
+  if (args.count("login")) {
+    UniClipboard::GUILogin();
+  }
+
+  if (args.count("copy")) {
+    UniClipboard::CopyClipboardText();
+  }
+
+  if (args.count("copyfile")) {
+    auto path = args["copyfile"];
+    UniClipboard::CopyFromFile(path);
+  }
+
+  if (args.count("paste")) {
+    UniClipboard::Paste();
+  }
+
+  return 0;
+}
+}  // namespace UniClipboard
