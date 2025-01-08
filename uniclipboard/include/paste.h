@@ -27,7 +27,16 @@ inline void Paste() {
       url = "/download_file/" + url;
       std::string save_path = item["filename"];
       save_path = "./" + save_path;
-      NetPullFile(save_path, url);
+
+      auto res = NetPull(url);
+      if (!res) {
+        std::cout << "Error: get download url\n";
+        return;
+      }
+
+      auto down_json = Json::parse(res->body);
+      auto down_url = down_json["download_url"];
+      NetPullFile(save_path, down_url);
 
     } else {
       std::string text = item["content"];

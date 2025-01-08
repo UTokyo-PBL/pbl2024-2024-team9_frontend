@@ -115,17 +115,32 @@ inline httplib::Result NetPull(const std::string& url) {
   }
 }
 
-inline bool NetPullFile(const std::string& save_path, const std::string& url) {
-  httplib::Client cli(REMOTE);
+inline bool NetPullFile(const std::string& save_path, const std::string& down_url) {
+  std::string url = down_url;
+
+  std::regex url_regex(R"(https://([^/]+)(/.*)?)");
+  std::smatch url_match;
+  if (!std::regex_match(url, url_match, url_regex)) {
+    std::cout << "Invalid or unsupported url: " << url << std::endl;
+    return false;
+  }
+
+  std::string host = url_match[1];
+  std::string path = url_match[2];
+  if (path.empty()) {
+    path = "/";
+  }
+
+  httplib::Client cli(host.c_str());
   cli.set_connection_timeout(10);
   cli.set_follow_location(true);
 
   try {
-    httplib::Headers headers = {{"Authorization", GetToken().c_str()}};
+    // httplib::Headers headers = {{"Authorization", GetToken().c_str()}};
 
     std::cout << "downfile url:" + url << std::endl;
 
-    auto res = cli.Get(url.c_str(), headers);
+    auto res = cli.Get(path.c_str());
     if (res == nullptr) {
       std::cout << "NetPullFile failed" << std::endl;
       return false;
