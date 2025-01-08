@@ -13,7 +13,7 @@
  
 - Android version: 
     - Java project using Gradle incluidng login, register, copy & paste from UniClipboard history by HTTP requests.
-        - Copy: copy text from local to UniClipboard using Paste button
-        - Paste: directly paste latest 3 texts from UniClipboard
+        - Copy: copy text/file from local to UniClipboard using Copy text/file button
+        - Paste: click on latest three items in UniClipboard history in which texts are pasted directly to system clipboard and files are downloaded locally
     -  Independent from the Android system's built-in clipboard
         - Unable to customize Context Menu using long press - modifying system-level feature is currently not allowed in Android.
