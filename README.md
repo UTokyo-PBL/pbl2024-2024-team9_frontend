@@ -8,8 +8,8 @@
 
 - Windows:
     - C++ project, mininal dependencies.
-    - Finished: login, copy, paste.
-    - Todo: encrypt, GUI.
+    - Finished: login, copy, paste, GUI.
+    - Todo: encrypt. 
  
 - Android version: 
     - Java project using Gradle incluidng login, register, copy & paste from UniClipboard history by HTTP requests.
